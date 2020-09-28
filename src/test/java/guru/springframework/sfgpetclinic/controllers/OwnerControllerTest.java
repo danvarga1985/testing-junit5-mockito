@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class OwnerControllerTest {
@@ -81,6 +82,7 @@ class OwnerControllerTest {
         // inOrder asserts
         inOrder.verify(ownerService).findAllByLastNameLike(anyString());
         inOrder.verify(model).addAttribute(anyString(), anyList());
+        verifyNoMoreInteractions(model);
     }
 
     @Test
@@ -101,13 +103,15 @@ class OwnerControllerTest {
     void processFindFormWildcardNotFound() {
         //given
         Owner owner = new Owner(1L, "Ernst", "DontFindMe");
-
         //when
         String viewName = controller.processFindForm(owner, bindingResult, model);
+
+        verifyNoMoreInteractions(ownerService);
 
         //then
         assertThat("%DontFindMe%").isEqualToIgnoringCase(stringArgumentCaptor.getValue());
         assertThat("owners/findOwners").isEqualToIgnoringCase(viewName);
+        verifyNoMoreInteractions(model);
     }
 
     @MockitoSettings(strictness = Strictness.LENIENT)
