@@ -9,9 +9,15 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,6 +38,30 @@ class OwnerControllerTest {
 
     @Mock
     BindingResult bindingResult;
+
+    @Captor
+    ArgumentCaptor<String> stringArgumentCaptor;
+
+    @Test
+    void processFindFormWildCardStringAnnotation() {
+
+
+    }
+
+    @Test
+    void processFindFormWildCardString() {
+        // given
+        Owner owner = new Owner(1L, "Ernst", "Junger");
+        List<Owner> ownerList = new ArrayList<>();
+        final ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        given(ownerService.findAllByLastNameLike(captor.capture())).willReturn(ownerList);
+
+        // when
+        String viewName = ownerController.processFindForm(owner, bindingResult, null);
+
+        // then
+        assertThat("%junger%").isEqualToIgnoringCase(captor.getValue());
+    }
 
     @Test
     void processCreationFormHasErrors() {
@@ -57,7 +87,7 @@ class OwnerControllerTest {
         // when
         String viewName = ownerController.processCreationForm(owner, bindingResult);
 
-        //then
+        // then
         assertThat(viewName).isEqualToIgnoringCase(REDIRECT_OWNERS_5);
     }
 }
