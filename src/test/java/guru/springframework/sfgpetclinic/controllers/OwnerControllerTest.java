@@ -2,11 +2,7 @@ package guru.springframework.sfgpetclinic.controllers;
 
 import guru.springframework.sfgpetclinic.fauxspring.BindingResult;
 import guru.springframework.sfgpetclinic.model.Owner;
-import guru.springframework.sfgpetclinic.repositories.OwnerRepository;
 import guru.springframework.sfgpetclinic.services.OwnerService;
-import guru.springframework.sfgpetclinic.services.springdatajpa.OwnerSDJpaService;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -17,10 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -44,8 +38,16 @@ class OwnerControllerTest {
 
     @Test
     void processFindFormWildCardStringAnnotation() {
+        // given
+        Owner owner = new Owner(1L, "Ernst", "Junger");
+        List<Owner> ownerList = new ArrayList<>();
+        given(ownerService.findAllByLastNameLike(stringArgumentCaptor.capture())).willReturn(ownerList);
 
+        // when
+        String viewName = ownerController.processFindForm(owner, bindingResult, null);
 
+        // then
+        assertThat("%junger%").isEqualToIgnoringCase(stringArgumentCaptor.getValue());
     }
 
     @Test
