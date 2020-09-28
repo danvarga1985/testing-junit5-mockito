@@ -9,14 +9,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class SpecialitySDJpaServiceTest {
@@ -51,7 +49,7 @@ class SpecialitySDJpaServiceTest {
 
         //then
         assertThat(foundSpeciality).isNotNull();
-        then(specialtyRepository).should(times(1)).findById(anyLong());
+        then(specialtyRepository).should(timeout(100).times(1)).findById(anyLong());
         then(specialtyRepository).shouldHaveNoMoreInteractions();
     }
 
@@ -64,7 +62,7 @@ class SpecialitySDJpaServiceTest {
         service.deleteById(1L);
 
         //then
-        then(specialtyRepository).should(times(2)).deleteById(1L);
+        then(specialtyRepository).should(timeout(100).times(2)).deleteById(1L);
     }
 
     @Test
@@ -74,7 +72,7 @@ class SpecialitySDJpaServiceTest {
         service.deleteById(1L);
 
         //then
-        then(specialtyRepository).should(atLeastOnce()).deleteById(1L);
+        then(specialtyRepository).should(timeout(100).atLeastOnce()).deleteById(1L);
     }
 
     @Test
@@ -91,7 +89,7 @@ class SpecialitySDJpaServiceTest {
         service.deleteById(1L);
 
         then(specialtyRepository).should(never()).deleteById(2L);
-        then(specialtyRepository).should(atLeastOnce()).deleteById(1L);
+        then(specialtyRepository).should(timeout(100).atLeastOnce()).deleteById(1L);
     }
 
     @Test
